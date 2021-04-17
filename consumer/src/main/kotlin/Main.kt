@@ -1,33 +1,30 @@
-import org.http4k.client.JavaHttpClient
-import org.http4k.core.*
+import org.http4k.core.Body
 import org.http4k.core.Method.GET
+import org.http4k.core.Response
+import org.http4k.core.Status
+import org.http4k.core.with
 import org.http4k.format.Jackson.auto
 import org.http4k.routing.bind
-import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 
 fun main() {
     routes(
-        "/person/{name}" bind GET to { req ->
-            val name = req.path("name")!!
-            val person = foo(name)
-
-            Response(Status.OK).with(Person.bodyLens of person)
+        "/total" bind GET to {
+            val orders = fetchOrders()
+            println(orders)
+            Response(Status.OK).with(OrdersTotal.ordersTotalBodyLens of OrdersTotal.from(orders))
         }
     ).asServer(Jetty(8080)).start()
 }
 
-fun foo(name: String): Person =
-    client(Request(GET, "http://localhost:8081/person/$name")).let { Person.bodyLens(it) }
-
-val client = JavaHttpClient()
-
-data class Person(
-    val favouriteColour: String
+data class OrdersTotal(
+    val value: Int
 ) {
     companion object {
-        val bodyLens = Body.auto<Person>().toLens()
+        fun from(orders: List<Order>) = OrdersTotal(orders.sumBy { it.total })
+
+        val ordersTotalBodyLens = Body.auto<OrdersTotal>().toLens()
     }
 }
