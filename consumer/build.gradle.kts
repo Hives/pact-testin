@@ -2,6 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.32"
+    id("au.com.dius.pact") version "4.0.2"
+
     application
 }
 
@@ -20,6 +22,11 @@ dependencies {
     implementation("org.http4k:http4k-core")
     implementation("org.http4k:http4k-server-jetty")
     implementation("org.http4k:http4k-format-jackson")
+    implementation("org.http4k:http4k-client-okhttp")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.22")
+    testImplementation("au.com.dius.pact:consumer:4.2.4")
 }
 
 application {

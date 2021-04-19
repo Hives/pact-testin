@@ -1,15 +1,11 @@
-import org.http4k.client.JavaHttpClient
 import org.http4k.core.Body
-import org.http4k.core.Method
+import org.http4k.core.HttpHandler
+import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.format.Jackson.auto
 
-const val ORDERS_API = "http://localhost:8081"
-
-fun fetchOrders(): List<Order> =
-    client(Request(Method.GET, "$ORDERS_API/orders")).let { ordersBodyLens(it) }
-
-val client = JavaHttpClient()
+fun createOrdersFetcher(client: HttpHandler): () -> List<Order> =
+    fun(): List<Order> = ordersBodyLens(client(Request(GET, "/orders")))
 
 val ordersBodyLens = Body.auto<List<Order>>().toLens()
 
