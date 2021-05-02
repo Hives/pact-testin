@@ -4,7 +4,9 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.format.Jackson.auto
 
-fun createOrdersFetcher(client: HttpHandler): () -> List<Order> =
+typealias OrdersFetcher = () -> List<Order>
+
+fun createOrdersFetcher(client: HttpHandler): OrdersFetcher =
     fun(): List<Order> = ordersBodyLens(client(Request(GET, "/orders")))
 
 val ordersBodyLens = Body.auto<List<Order>>().toLens()

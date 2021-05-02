@@ -1,7 +1,14 @@
-import org.http4k.core.Body
-import org.http4k.format.Jackson.auto
+package routes
 
-val orders = listOf(
+import org.http4k.core.*
+import org.http4k.format.Jackson.auto
+import org.http4k.routing.bind
+
+val ordersRoute = "/orders" bind Method.GET to {
+    Response(Status.OK).with(ordersBodyLens of orders)
+}
+
+private val orders = listOf(
     Order(
         id = "1",
         items = listOf(
@@ -44,9 +51,9 @@ val orders = listOf(
     )
 )
 
-val ordersBodyLens = Body.auto<List<Order>>().toLens()
+private val ordersBodyLens = Body.auto<List<Order>>().toLens()
 
-data class Order(
+private data class Order(
     val id: String,
     val items: List<Item>
 ) {

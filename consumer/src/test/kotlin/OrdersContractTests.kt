@@ -1,16 +1,16 @@
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEmpty
-import au.com.dius.pact.consumer.*
+import au.com.dius.pact.consumer.ConsumerPactBuilder
+import au.com.dius.pact.consumer.PactVerificationResult
 import au.com.dius.pact.consumer.dsl.newArray
 import au.com.dius.pact.consumer.dsl.newJsonArray
 import au.com.dius.pact.consumer.dsl.newObject
-import au.com.dius.pact.consumer.model.MockProviderConfig
-import au.com.dius.pact.core.model.RequestResponsePact
+import helpers.runTest
 import org.http4k.core.Uri
 import org.junit.jupiter.api.Test
 
-internal class ContractTest {
+internal class OrdersContractTests {
 
     @Test
     fun `it can call the orders api and process the response`() {
@@ -49,15 +49,4 @@ internal class ContractTest {
 
         assertThat(result).isEqualTo(PactVerificationResult.Ok())
     }
-}
-
-private fun RequestResponsePact.runTest(test: (Int) -> Unit): PactVerificationResult {
-    val port = 7777
-    val config = MockProviderConfig.httpConfig(port = port)
-    return runConsumerTest(this, config, object : PactTestRun<Nothing?> {
-        override fun run(mockServer: MockServer, context: PactTestExecutionContext?): Nothing? {
-            test(port)
-            return null
-        }
-    })
 }
